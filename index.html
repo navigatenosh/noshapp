@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Grocery List Generator</title>
+    <title>Navigate Nosh</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
@@ -43,7 +43,7 @@
             
             document.getElementById("results").classList.add("hidden");
             try {
-                const response = await axios.post("https://your-backend-url.com/generate-list", { urls });
+                const response = await axios.post("noshapp-production.up.railway.app", { urls });
                 const list = response.data;
                 let html = "";
                 for (const [category, items] of Object.entries(list)) {
@@ -75,7 +75,7 @@
             const email = prompt("Enter your email to receive the list:");
             if (!email) return;
             try {
-                await axios.post("https://your-backend-url.com/send-email", { email, groceryList });
+                await axios.post("noshapp-production.up.railway.app", { email, groceryList });
                 alert("Email sent successfully!");
             } catch (error) {
                 alert("Failed to send email. Please try again.");
