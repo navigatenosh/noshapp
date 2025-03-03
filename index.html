@@ -49,7 +49,7 @@
             
             document.getElementById("results").classList.add("hidden");
             try {
-                const response = await axios.post("https://navigatenosh.up.railway.app/generate-list", { urls, query });
+                const response = await axios.post("outstanding-tranquility-production.up.railway.app", { urls, query });
                 const list = response.data;
                 let html = "";
                 for (const [category, items] of Object.entries(list)) {
@@ -81,7 +81,7 @@
             const email = prompt("Enter your email to receive the list:");
             if (!email) return;
             try {
-                await axios.post("https://navigatenosh.up.railway.app/send-email", { email, groceryList });
+                await axios.post("outstanding-tranquility-production.up.railway.app", { email, groceryList });
                 alert("Email sent successfully!");
             } catch (error) {
                 alert("Failed to send email. Please try again.");
