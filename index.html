@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Grocery List Generator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    
+    <div class="min-h-screen flex flex-col items-center justify-center py-6">
+        <div class="bg-white shadow-lg rounded-2xl p-6 max-w-3xl w-full">
+            <h1 class="text-3xl font-bold text-gray-900 text-center mb-4">AI-Powered Grocery List Generator</h1>
+            <p class="text-gray-600 text-center mb-6">Enter recipe URLs to generate a smart grocery list.</p>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">Recipe URLs (one per line)</label>
+                <textarea id="recipeUrls" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Enter URLs..."></textarea>
+            </div>
+            
+            <button onclick="generateList()" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">Generate Grocery List</button>
+            
+            <div id="results" class="hidden mt-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-2">Your Grocery List</h2>
+                <div id="groceryList" class="bg-gray-50 p-4 rounded-lg shadow-inner"></div>
+                
+                <div class="mt-4 flex space-x-4">
+                    <button onclick="downloadList()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Download</button>
+                    <button onclick="sendEmail()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Send to Email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function generateList() {
+            const urls = document.getElementById("recipeUrls").value.split('\n').map(url => url.trim()).filter(url => url);
+            if (urls.length === 0) {
+                alert("Please enter at least one recipe URL.");
+                return;
+            }
+            
+            document.getElementById("results").classList.add("hidden");
+            try {
+                const response = await axios.post("https://your-backend-url.com/generate-list", { urls });
+                const list = response.data;
+                let html = "";
+                for (const [category, items] of Object.entries(list)) {
+                    html += `<h3 class='font-semibold text-lg text-gray-800 mt-3'>${category}</h3>`;
+                    html += `<ul class='list-disc ml-6 text-gray-700'>`;
+                    items.forEach(item => html += `<li>${item}</li>`);
+                    html += `</ul>`;
+                }
+                document.getElementById("groceryList").innerHTML = html;
+                document.getElementById("results").classList.remove("hidden");
+            } catch (error) {
+                alert("Failed to generate list. Please try again.");
+            }
+        }
+
+        function downloadList() {
+            const groceryList = document.getElementById("groceryList").innerText;
+            const blob = new Blob([groceryList], { type: "text/plain" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "grocery_list.txt";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        
+        async function sendEmail() {
+            const groceryList = document.getElementById("groceryList").innerText;
+            const email = prompt("Enter your email to receive the list:");
+            if (!email) return;
+            try {
+                await axios.post("https://your-backend-url.com/send-email", { email, groceryList });
+                alert("Email sent successfully!");
+            } catch (error) {
+                alert("Failed to send email. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>
