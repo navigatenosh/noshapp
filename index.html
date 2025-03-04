@@ -49,7 +49,8 @@
             
             document.getElementById("results").classList.add("hidden");
             try {
-                const response = await axios.post("outstanding-tranquility-production.up.railway.app", { urls, query });
+                const response = await axios.post("https://noshappbackend-production.up.railway.app/generate-list", { urls, query })
+
                 const list = response.data;
                 let html = "";
                 for (const [category, items] of Object.entries(list)) {
